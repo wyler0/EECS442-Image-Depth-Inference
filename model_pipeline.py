@@ -1,5 +1,5 @@
 '''
-EECS 498 - Machine Learning for Affective Computing
+EECS 442 - Computer Vision
 Winter 2021 - Final Project
 Train, validate, and predict model
     Runs everything
