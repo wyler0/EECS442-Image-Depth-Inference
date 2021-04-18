@@ -5,31 +5,32 @@ Train, validate, and predict model
     Runs everything
     Usage: python modelPipe.py
 '''
-import torch
+import math
 import itertools
+from torch.nn import CrossEntropyLoss
+from torch.optim import Adam
+from torch.utils.data import DataLoader, SubsetRandomSampler
 import numpy as np
 
-from diode import DIODE # TODO, add this function / properly load form dataset loader
-from torch.utils.data import DataLoader, SubsetRandomSampler
-from model.model import ImageDepthPredModel
+from diode import DIODE
+from models.model import ImageDepthPredModel
 from train_model import _execute_epoch, _predict
 from utils import get_hyper_parameters, make_training_plot, save_training_plot, config, hold_training_plot
 
 def main():
     # Setup & Split Dataset
-    dataset = DIODE(meta_fname, data_root, 'val', scene_types):)
+    dataset = DIODE('diode/diode_meta.json', 'diode/val', ['val'], ['indoors','outdoor'])
     indices = np.arange(0,len(dataset))
     np.random.shuffle(indices) # shuffle the indicies
 
-    tr_split_ind = 0.7*len(dataset) # 70% Train
-    va_split_ind = 0.85*len(dataset) # 15% Validation and 15% Test
+    tr_split_ind = math.floor(0.7*len(dataset)) # 70% Train
+    va_split_ind = math.floor(0.85*len(dataset)) # 15% Validation and 15% Test
     tr_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]))
     va_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[tr_split_ind:va_split_ind]))
     te_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[va_split_ind:]))
 
     # Load model
     model = ImageDepthPredModel()
-
 
     # Grab hyperparameters for model specified
     learning_rate, weight_decay = get_hyper_parameters('basemodel')
@@ -44,8 +45,8 @@ def main():
         print('Training and evaluating Basemodel with: \tLR = ' +str(lr) + '\tWD = '+str(wd))
 
         # Define loss function, and optimizer
-        criterion = torch.nn.CrossEntropyLoss()
-        optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
+        criterion = CrossEntropyLoss()
+        optimizer = Adam(model.parameters(), lr=lr, weight_decay=wd)
         
         # Setup plots and metrics results storage
         stats = []
