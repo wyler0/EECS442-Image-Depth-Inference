@@ -9,27 +9,27 @@ import torch
 import itertools
 import numpy as np
 
-from diode import DIODE, plot_depth_map
+from diode import DIODE # TODO, add this function / properly load form dataset loader
+from torch.utils.data import DataLoader, SubsetRandomSampler
 from model.model import ImageDepthPredModel
-from train_model import _train_epoch, _evaluate_epoch, _predict
-from utils import get_hyper_parameters, make_training_plot, save_training_plot, config
-from torch.utils.data import DataLoader 
-from torchsummary import summary
+from train_model import _execute_epoch, _predict
+from utils import get_hyper_parameters, make_training_plot, save_training_plot, config, hold_training_plot
 
 def main():
-    # Dataset Metadata
-    meta_fname = './diode_meta.json'
-    data_root = './dataset'
-    # Data loaders
-    # indoors training data
-    tr_indoors_data = DIODE(meta_fname, data_root, splits='train', scene_types='outdoor')
-    va_indoors_data = DIODE(meta_fname, data_root, splits='val', scene_types='outdoor')
-    te_indoors_data = DIODE(meta_fname, data_root, splits='test', scene_types='outdoor')
-    # TODO: outdoor training data
-    tr_loader = DataLoader(tr_indoors_data, batch_size=64, shuffle=True)
-    va_loader = DataLoader(va_indoors_data, batch_size=64, shuffle=True)
-    te_loader = DataLoader(te_indoors_data, batch_size=64, shuffle=True)
+    # Setup & Split Dataset
+    dataset = DIODE(meta_fname, data_root, 'val', scene_types):)
+    indices = np.arange(0,len(dataset))
+    np.random.shuffle(indices) # shuffle the indicies
+
+    tr_split_ind = 0.7*len(dataset) # 70% Train
+    va_split_ind = 0.85*len(dataset) # 15% Validation and 15% Test
+    tr_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]))
+    va_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[tr_split_ind:va_split_ind]))
+    te_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[va_split_ind:]))
+
+    # Load model
     model = ImageDepthPredModel()
+
 
     # Grab hyperparameters for model specified
     learning_rate, weight_decay = get_hyper_parameters('basemodel')
@@ -47,10 +47,7 @@ def main():
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
         
-<<<<<<< HEAD
-=======
         # Setup plots and metrics results storage
->>>>>>> 9aaab9a1fe3b3958b8388df8d7a5ed002b09c0b0
         stats = []
         fig, axes = make_training_plot('basemodel')
 
