@@ -1,2 +1,6 @@
 env/**
 env
+.vscode
+.vscode/**
+vscode.code-workspace
+diode/val/**

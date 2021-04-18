@@ -1,5 +1,5 @@
 '''
-EECS 498 - Machine Learning for Affective Computing
+EECS 442 - Computer Vision
 Winter 2021 - Final Project
 Train, validate, and predict model
     Runs everything
@@ -41,25 +41,29 @@ def main():
 
     # Grid search on weight decay and learning rate options
     for lr, wd in itertools.product(learning_rate, weight_decay):
-        
         print('Training and evaluating Basemodel with: \tLR = ' +str(lr) + '\tWD = '+str(wd))
+
         # Define loss function, and optimizer
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
         
+<<<<<<< HEAD
+=======
+        # Setup plots and metrics results storage
+>>>>>>> 9aaab9a1fe3b3958b8388df8d7a5ed002b09c0b0
         stats = []
-
         fig, axes = make_training_plot('basemodel')
 
-        # Loop over the entire dataset multiple times
+        # Executee configured number of epochs training + validating
         for epoch in range(0, config('basemodel.num_epochs')):
             # Train model
-            _train_epoch(tr_loader, model, criterion, optimizer)
+            (tr_loader, model, criterion, optimizer)
 
             # Evaluate model
-            _evaluate_epoch(axes, tr_loader, va_loader, model, criterion, epoch, stats)
+            stats = _execute_epoch(axes, tr_loader, va_loader, model, criterion, epoch, stats)
 
         print('Finished Training')
+        
         """
         # TODO, Update these to use the new metrics
         print("Validation Accuracy \t Validation Loss \t Training Accuracy \t Training Loss\n")
@@ -71,7 +75,7 @@ def main():
 
         print('Begin model evaluation...')
 
-        # Evaluate model
+        # Test model
         labels, preds = _predict(te_loader, model)
 
         """
@@ -92,14 +96,14 @@ def main():
             best_lr = lr
             best_wd = wd
         """
-        print('Finished Model Evaluation')
+        print('Finished Model Testing')
 
         save_training_plot(fig, 'basemodel')
 
     print("Best learning rate: {}, best weight_decay: {}".format(best_lr, best_wd))
     print("Weighted F-1: {:.4f}".format(best_wf1))
 
-    utils.hold_training_plot()
+    hold_training_plot()
 
 if __name__ == '__main__':
     main()
