@@ -9,16 +9,27 @@ import torch
 import itertools
 import numpy as np
 
-from dataset import get_train_val_test_loaders # TODO, add this function / properly load form dataset loader
-from models.basemodel import BaseModel # TODO, update this to the actual model
+from diode import DIODE, plot_depth_map
+from model.model import ImageDepthPredModel
 from train_model import _train_epoch, _evaluate_epoch, _predict
 from utils import get_hyper_parameters, make_training_plot, save_training_plot, config
+from torch.utils.data import DataLoader 
+from torchsummary import summary
 
 def main():
+    # Dataset Metadata
+    meta_fname = './diode_meta.json'
+    data_root = './dataset'
     # Data loaders
-    tr_loader, va_loader, te_loader = get_train_val_test_loaders()
-    model = BaseModel()
-
+    # indoors training data
+    tr_indoors_data = DIODE(meta_fname, data_root, splits='train', scene_types='outdoor')
+    va_indoors_data = DIODE(meta_fname, data_root, splits='val', scene_types='outdoor')
+    te_indoors_data = DIODE(meta_fname, data_root, splits='test', scene_types='outdoor')
+    # TODO: outdoor training data
+    tr_loader = DataLoader(tr_indoors_data, batch_size=64, shuffle=True)
+    va_loader = DataLoader(va_indoors_data, batch_size=64, shuffle=True)
+    te_loader = DataLoader(te_indoors_data, batch_size=64, shuffle=True)
+    model = ImageDepthPredModel()
 
     # Grab hyperparameters for model specified
     learning_rate, weight_decay = get_hyper_parameters('basemodel')
@@ -35,7 +46,6 @@ def main():
         # Define loss function, and optimizer
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
-        
         
         stats = []
 
