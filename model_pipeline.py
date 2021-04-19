@@ -27,6 +27,7 @@ def main(use_cuda=False, batch_size=16):
     if(use_cuda):
         print("Using GPU.")
     print("Batch size: " + str(batch_size))
+    print("Epochs: " + str(config('basemodel.num_epochs')))
     # Setup & Split Datase
     dataset = DIODE('diode/diode_meta.json', 'diode', ['val'], ['indoors','outdoor'])
     indices = np.arange(0,len(dataset))
@@ -73,6 +74,8 @@ def main(use_cuda=False, batch_size=16):
             stats = _execute_epoch(axes, tr_loader, va_loader, model, criterion, optimizer, epoch, stats, use_cuda=use_cuda)
             
             if epoch%4 == 0: # Save every five epcoh's
+                print("Saving model state and plots.")
+                save_training_plot(fig, 'basemodel')
                 check = {'state_dict': model.state_dict(),'optimizer' :optimizer.state_dict()}
                 torch.save(check, save_dir+model_name+ "_save_" + str(epoch) + ".pt")
            
