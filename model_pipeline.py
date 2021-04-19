@@ -103,7 +103,7 @@ def main(use_cuda=False, batch_size=16):
         print(te_metrics[0], te_loss, sep='\t')
         print('Finished Model Testing, Saving Model')
         check = {'state_dict': model.state_dict(),'optimizer' :optimizer.state_dict()}
-        torch.save(check, save_dir+model_name+ "_save_" + str(final) + ".pt")
+        torch.save(check, save_dir+model_name+ "_save_final.pt")
 
     print("Best learning rate: {}, best weight_decay: {}".format(best_lr, best_wd))
     print("Best MSE: {:.4f}".format(best_mse))

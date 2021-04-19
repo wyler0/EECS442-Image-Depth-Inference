@@ -78,8 +78,8 @@ def _train_epoch(data_loader, model, criterion, optimizer, use_cuda=False):
         if(use_cuda):
             output = output.to(device="cuda")
         y = y.unsqueeze(3) # Add axis of dim 1 to end of gt for metrics
-        output = output.permute(0,2,3,1) # Move channel axis for metrics
         loss = criterion(output, y)
+        output = output.permute(0,2,3,1) # Move channel axis for metrics
         loss.backward()
         optimizer.step()
 

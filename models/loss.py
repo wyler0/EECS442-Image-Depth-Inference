@@ -30,7 +30,7 @@ class ThreePartLoss(nn.Module):
 
     def forward(self, y_pred, y_ground, depthScale=0.1):
         # reshape inputs to be (N, C, H, W)
-        y_ground = y_ground.view((y_ground.size()[0], 1, y_ground.size()[1], y_ground.size()[2]))
+        y_ground = y_ground.permute(0,3,1,2)
 
         # L1 loss of pixel-wise diff
         l_depth = torch.sum(torch.abs(y_pred - y_ground)) / torch.numel(y_pred)
