@@ -9,6 +9,7 @@ import math
 import itertools
 
 import numpy as np
+import torch
 from torch.nn import L1Loss
 from torch.optim import Adam
 from torch.utils.data import DataLoader, SubsetRandomSampler
@@ -31,18 +32,20 @@ def main(use_cuda=False, batch_size=16):
 
     tr_split_ind = math.floor(0.7*len(dataset)) # 70% Train
     va_split_ind = math.floor(0.85*len(dataset)) # 15% Validation and 15% Test
-    tr_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]))
-    va_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[tr_split_ind:va_split_ind]))
+    tr_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]), pin_memory=True)
+    va_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[tr_split_ind:va_split_ind]), pin_memory=True)
     te_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[va_split_ind:]))
 
     # Load model
+    model_name = "basemodel"
     model = ImageDepthPredModel()
     if(use_cuda):
         print("Model sent to GPU")
         model.cuda()
+    save_dir = 'models/'
 
     # Grab hyperparameters for model specified
-    learning_rate, weight_decay = get_hyper_parameters('basemodel')
+    learning_rate, weight_decay = get_hyper_parameters(model_name)
 
     # Get the best model return
     best_wd = 0
@@ -66,8 +69,11 @@ def main(use_cuda=False, batch_size=16):
             print('\nEpoch #' + str(epoch))
             # Train model + Evaluate Model
             stats = _execute_epoch(None, tr_loader, va_loader, model, criterion, optimizer, epoch, stats, use_cuda=use_cuda)
+            
             if epoch%4 == 0: # Save every five epcoh's
-                torch.save(model, "model_save_" + str(i) + ".pt")
+                check = {'state_dict': model.state_dict(),'optimizer' :optimizer.state_dict()}
+                torch.save(check, save_dir+model_name+ "_save_" + str(epoch) + ".pt")
+           
             train_acc = stats[len(stats)-1][0][0] #MSE
             train_loss = stats[len(stats)-1][1] #Loss
             val_acc = stats[len(stats)-1][2][0] #MSE

@@ -41,6 +41,7 @@ def MAE(gt_depth_map, pred_depth_map):
     return error.item()
 
 def thresh_acc(gt_depth_map, pred_depth_map, threshold=1.25):
+    return 0; # TEMPORARY due to GPU mem limits
     bs, h, w, _ = gt_depth_map.size()
     index = torch.where(torch.max(gt_depth_map/pred_depth_map, pred_depth_map/gt_depth_map) < threshold)
     percent = len(index[0])/(bs*h*w)
@@ -69,6 +70,16 @@ def plot_metrics(train_metrics, val_metrics, test_metrics):
     data = {'train_thresh_1.25': train_metrics[4], 'val_thresh_1.25': val_metrics[4], 'test_thresh_1.25': test_metrics[4]}
     plt.bar(list(data.keys()), list(data.values()))
 
+def eval_metrics_iter(gt_depth_map, pred_depth_map):
+    mse = RMSE(gt_depth_map, pred_depth_map) / gt_depth_map.shape[0] # BS Normalization
+    mae = (MAE(gt_depth_map, pred_depth_map))  / gt_depth_map.shape[0] # BS Normalization
+    are = (ARE(gt_depth_map, pred_depth_map))  / gt_depth_map.shape[0] # BS Normalization
+    ale = (ALE(gt_depth_map, pred_depth_map))  / gt_depth_map.shape[0] # BS Normalization
+    thresh125 = (thresh_acc(gt_depth_map, pred_depth_map))  / gt_depth_map.shape[0] # BS Normalization
+    thresh156 = (thresh_acc(gt_depth_map, pred_depth_map, threshold=1.5625))  / gt_depth_map.shape[0] # BS Normalization
+    thresh195 = (thresh_acc(gt_depth_map, pred_depth_map, threshold=1.953125))  / gt_depth_map.shape[0] # BS Normalization
+    return (mse, mae, are, ale, thresh125, thresh156, thresh195)
+
 def eval_metrics(y_true, y_pred): #, device):
     #evaluation of metrics over all batches
     mse, mae, are, ale, thresh125, thresh156, thresh195 = [], [], [], [], [], [], []
@@ -76,13 +87,13 @@ def eval_metrics(y_true, y_pred): #, device):
         #images = images.cuda() #to(device)
         #gt_depth_map = gt_depth_maps.cuda() #to(device)
         #pred_depth_maps = net(images)
-        mse.append(RMSE(gt_depth_map, pred_depth_map))
-        mae.append(MAE(gt_depth_map, pred_depth_map))
-        are.append(ARE(gt_depth_map, pred_depth_map))
-        ale.append(ALE(gt_depth_map, pred_depth_map))
-        thresh125.append(thresh_acc(gt_depth_map, pred_depth_map))
-        thresh156.append(thresh_acc(gt_depth_map, pred_depth_map, threshold=1.5625))
-        thresh195.append(thresh_acc(gt_depth_map, pred_depth_map, threshold=1.953125))
+        mse.append(RMSE(gt_depth_map, pred_depth_map)) / gt_depth_map.shape[0] # BS Normalization
+        mae.append(MAE(gt_depth_map, pred_depth_map)) / gt_depth_map.shape[0] # BS Normalization
+        are.append(ARE(gt_depth_map, pred_depth_map)) / gt_depth_map.shape[0] # BS Normalization
+        ale.append(ALE(gt_depth_map, pred_depth_map)) / gt_depth_map.shape[0] # BS Normalization
+        thresh125.append(thresh_acc(gt_depth_map, pred_depth_map)) / gt_depth_map.shape[0] # BS Normalization
+        thresh156.append(thresh_acc(gt_depth_map, pred_depth_map, threshold=1.5625)) / gt_depth_map.shape[0] # BS Normalization
+        thresh195.append(thresh_acc(gt_depth_map, pred_depth_map, threshold=1.953125)) / gt_depth_map.shape[0] # BS Normalization
         
     mse = np.mean(mse)
     mae = np.mean(mae)
