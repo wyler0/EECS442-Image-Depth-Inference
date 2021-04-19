@@ -17,6 +17,7 @@ from tqdm import tqdm
 
 from diode import DIODE
 from models.model import ImageDepthPredModel
+from models.loss import ThreePartLoss
 from train_model import _execute_epoch, _predict
 from metrics import eval_metrics
 from utils import get_hyper_parameters, config #, make_training_plot, save_training_plot, hold_training_plot
@@ -57,7 +58,7 @@ def main(use_cuda=False, batch_size=16):
         print('\nTraining and Evaluating Basemodel with: \tLR = ' +str(lr) + '\tWD = '+str(wd))
 
         # Define loss function, and optimizer
-        criterion = L1Loss()
+        criterion = ThreePartLoss(use_cuda=use_cuda)
         optimizer = Adam(model.parameters(), lr=lr, weight_decay=wd)
         
         # Setup plots and metrics results storage

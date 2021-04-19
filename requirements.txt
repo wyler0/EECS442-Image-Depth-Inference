@@ -10,3 +10,4 @@ torch==1.8.1
 torchvision==0.9.1
 tqdm==4.59.0
 typing-extensions==3.7.4.3
+pytorch-msssim==0.2.1

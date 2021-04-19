@@ -36,9 +36,9 @@ def _predict(eval_loader, model, criterion, use_cuda=False):
             output = model(X)
             if(use_cuda):
                 output = output.to(device="cuda")
+            running_loss[i] = criterion(output, y)
             y = y.unsqueeze(3) # Add axis of dim 1 to end of gt for metrics
             output = output.permute(0,2,3,1) # Move channel axis for metrics
-            running_loss[i] = criterion(output, y)
             tr_metrics[i] = torch.Tensor(list(eval_metrics_iter(y, output)))
         if(use_cuda):
             del X
@@ -77,7 +77,7 @@ def _train_epoch(data_loader, model, criterion, optimizer, use_cuda=False):
         output = model(X)
         if(use_cuda):
             output = output.to(device="cuda")
-        loss = criterion(np.squeeze(output, axis=1), y)
+        loss = criterion(output, y)
         loss.backward()
         optimizer.step()
 
