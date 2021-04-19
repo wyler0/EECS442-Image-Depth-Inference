@@ -3,6 +3,7 @@ from itertools import chain
 import json
 
 from torch.utils.data import Dataset
+from torchvision import transforms
 import numpy as np
 from PIL import Image
 
@@ -103,6 +104,14 @@ class DIODE(Dataset):
                 imgs.extend(list(_curr))
         self.imgs = imgs
 
+        self.img_preprocess = transforms.Compose([])
+        self.gt_preprocess = transforms.Compose([
+            transforms.Resize((384, 512))
+            #transforms.CenterCrop(224),
+            #transforms.ToTensor(),
+            #transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
+
     def __len__(self):
         return len(self.imgs)
 
@@ -113,7 +122,10 @@ class DIODE(Dataset):
         de_mask_fname = osp.join(self.data_root, '{}_depth_mask.npy'.format(im))
 
         # im = np.array(Image.open(osp.join(self.data_root, im_fname)))
-        im = np.array(Image.open(im_fname))
+        im = np.rollaxis(np.array(Image.open(im_fname)), 2, 0) # Reorder so channel axis comes first
         de = np.load(de_fname).squeeze()
-        de_mask = np.load(de_mask_fname)
-        return im, de, de_mask
+        de = np.array(self.gt_preprocess(Image.fromarray(de)))
+        #TODO Use these to mask predictions I guess?
+        #TODO Preprocess!
+        #de_mask = np.load(de_mask_fname) 
+        return im, de #, de_mask
