@@ -30,8 +30,10 @@ class ThreePartLoss(nn.Module):
 
     def forward(self, y_pred, y_ground, depthScale=0.1):
         # reshape inputs to be (N, C, H, W)
-        y_ground = y_ground.permute(0,3,1,2)
-
+        if(y_ground.shape[1] != 1):
+            y_ground = y_ground.permute(0,3,1,2)
+        if(y_pred.shape[1] != 1):
+            y_pred = y_pred.permute(0,3,1,2)
         # L1 loss of pixel-wise diff
         l_depth = torch.sum(torch.abs(y_pred - y_ground)) / torch.numel(y_pred)
         # differentiable ssim loss from external package
