@@ -1,0 +1,448 @@
+Using GPU.
+Batch size: 4
+Model sent to GPU
+
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training and Evaluating Basemodel with: 	LR = 0.0001	WD = 0
+
+Epoch #0
+
+100%|██████████| 107/107 [01:46<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.64it/s]
+
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(1022.6902)	tensor(6.5971, grad_fn=<DivBackward0>)	tensor(854.5122)	tensor(4.9038)
+
+Epoch #1
+
+100%|██████████| 107/107 [01:46<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:14<00:00,  1.64it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(871.1555)	tensor(5.3625, grad_fn=<DivBackward0>)	tensor(819.5711)	tensor(4.6492)
+
+Epoch #2
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.64it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(849.2183)	tensor(5.1155, grad_fn=<DivBackward0>)	tensor(912.7992)	tensor(5.2197)
+
+Epoch #3
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(841.7292)	tensor(5.0297, grad_fn=<DivBackward0>)	tensor(850.2198)	tensor(4.7348)
+
+Epoch #4
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:14<00:00,  1.64it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(810.5408)	tensor(4.7466, grad_fn=<DivBackward0>)	tensor(779.7826)	tensor(4.2086)
+
+Epoch #5
+
+100%|██████████| 107/107 [01:46<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(792.5941)	tensor(4.6209, grad_fn=<DivBackward0>)	tensor(852.4078)	tensor(4.8014)
+
+Epoch #6
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:14<00:00,  1.64it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(769.7723)	tensor(4.4167, grad_fn=<DivBackward0>)	tensor(758.9346)	tensor(3.9940)
+
+Epoch #7
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(780.0903)	tensor(4.5066, grad_fn=<DivBackward0>)	tensor(749.7463)	tensor(3.8631)
+
+Epoch #8
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(760.6636)	tensor(4.3379, grad_fn=<DivBackward0>)	tensor(765.9598)	tensor(4.1308)
+
+Epoch #9
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:14<00:00,  1.64it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(746.7578)	tensor(4.2202, grad_fn=<DivBackward0>)	tensor(742.6578)	tensor(3.8096)
+
+Epoch #10
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(728.0517)	tensor(4.0423, grad_fn=<DivBackward0>)	tensor(735.9232)	tensor(3.7489)
+
+Epoch #11
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(728.3673)	tensor(4.0504, grad_fn=<DivBackward0>)	tensor(852.4312)	tensor(4.6201)
+
+Epoch #12
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(743.7704)	tensor(4.2326, grad_fn=<DivBackward0>)	tensor(751.0786)	tensor(3.9113)
+
+Epoch #13
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(705.3646)	tensor(3.8636, grad_fn=<DivBackward0>)	tensor(772.5612)	tensor(4.0840)
+
+Epoch #14
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(724.4662)	tensor(4.0323, grad_fn=<DivBackward0>)	tensor(714.5334)	tensor(3.5633)
+
+Epoch #15
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(699.1375)	tensor(3.8077, grad_fn=<DivBackward0>)	tensor(722.8334)	tensor(3.5907)
+
+Epoch #16
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(708.5677)	tensor(3.8818, grad_fn=<DivBackward0>)	tensor(707.7081)	tensor(3.4764)
+
+Epoch #17
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(688.6454)	tensor(3.7432, grad_fn=<DivBackward0>)	tensor(741.5994)	tensor(3.8610)
+
+Epoch #18
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.67it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(695.4144)	tensor(3.7835, grad_fn=<DivBackward0>)	tensor(725.6283)	tensor(3.5188)
+
+Epoch #19
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(699.0209)	tensor(3.8159, grad_fn=<DivBackward0>)	tensor(706.0187)	tensor(3.6075)
+
+Epoch #20
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(673.1863)	tensor(3.6157, grad_fn=<DivBackward0>)	tensor(719.7700)	tensor(3.4780)
+
+Epoch #21
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(679.9849)	tensor(3.6630, grad_fn=<DivBackward0>)	tensor(705.1723)	tensor(3.4946)
+
+Epoch #22
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(694.2916)	tensor(3.7876, grad_fn=<DivBackward0>)	tensor(718.3701)	tensor(3.4828)
+
+Epoch #23
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(660.3537)	tensor(3.4926, grad_fn=<DivBackward0>)	tensor(712.4960)	tensor(3.6119)
+
+Epoch #24
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(663.4401)	tensor(3.5313, grad_fn=<DivBackward0>)	tensor(688.3268)	tensor(3.3166)
+
+Epoch #25
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(647.3087)	tensor(3.3871, grad_fn=<DivBackward0>)	tensor(692.7780)	tensor(3.4451)
+
+Epoch #26
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.67it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(640.0365)	tensor(3.3318, grad_fn=<DivBackward0>)	tensor(669.0397)	tensor(3.1566)
+
+Epoch #27
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.67it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(646.6683)	tensor(3.3744, grad_fn=<DivBackward0>)	tensor(701.8983)	tensor(3.5010)
+
+Epoch #28
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(646.4111)	tensor(3.3486, grad_fn=<DivBackward0>)	tensor(706.9028)	tensor(3.6729)
+
+Epoch #29
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(631.4728)	tensor(3.2370, grad_fn=<DivBackward0>)	tensor(673.3345)	tensor(3.2859)
+
+Epoch #30
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(636.1123)	tensor(3.3133, grad_fn=<DivBackward0>)	tensor(709.1857)	tensor(3.5145)
+
+Epoch #31
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(633.4833)	tensor(3.2869, grad_fn=<DivBackward0>)	tensor(667.1204)	tensor(3.2202)
+
+Epoch #32
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.67it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(615.1127)	tensor(3.1289, grad_fn=<DivBackward0>)	tensor(662.8196)	tensor(3.1538)
+
+Epoch #33
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(616.5258)	tensor(3.1275, grad_fn=<DivBackward0>)	tensor(661.9468)	tensor(3.1604)
+
+Epoch #34
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(610.3969)	tensor(3.1047, grad_fn=<DivBackward0>)	tensor(648.4918)	tensor(2.9741)
+
+Epoch #35
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.67it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(619.1168)	tensor(3.1403, grad_fn=<DivBackward0>)	tensor(653.3667)	tensor(3.1247)
+
+Epoch #36
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.66it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(597.9508)	tensor(2.9987, grad_fn=<DivBackward0>)	tensor(640.2316)	tensor(2.9356)
+
+Epoch #37
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.67it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(595.3209)	tensor(2.9729, grad_fn=<DivBackward0>)	tensor(658.6949)	tensor(3.0862)
+
+Epoch #38
+
+100%|██████████| 107/107 [01:45<00:00,  1.02it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+  0%|          | 0/107 [00:00<?, ?it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(596.4372)	tensor(2.9720, grad_fn=<DivBackward0>)	tensor(657.1736)	tensor(3.0666)
+
+Epoch #39
+
+100%|██████████| 107/107 [01:45<00:00,  1.01it/s]
+100%|██████████| 23/23 [00:13<00:00,  1.65it/s]
+
+
+Training MSE	Training Loss	Validation MSE	Validation Loss
+
+tensor(599.2966)	tensor(2.9676, grad_fn=<DivBackward0>)	tensor(644.7228)	tensor(2.9650)

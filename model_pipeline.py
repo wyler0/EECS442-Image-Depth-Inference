@@ -14,13 +14,14 @@ from torch.nn import L1Loss
 from torch.optim import Adam
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from tqdm import tqdm
+from matplotlib import pyplot as plt
 
 from diode import DIODE
-from models.model import ImageDepthPredModel
 from models.loss import ThreePartLoss
+from models.model import ImageDepthPredModel
 from train_model import _execute_epoch, _predict
 from metrics import eval_metrics
-from utils import get_hyper_parameters, config #, make_training_plot, save_training_plot, hold_training_plot
+from utils import get_hyper_parameters, config, make_training_plot, save_training_plot, hold_training_plot
 
 def main(use_cuda=False, batch_size=16):
     if(use_cuda):
@@ -63,13 +64,13 @@ def main(use_cuda=False, batch_size=16):
         
         # Setup plots and metrics results storage
         stats = []
-        #fig, axes = make_training_plot('basemodel')
+        fig, axes = make_training_plot('basemodel')
 
         # Executee configured number of epochs training + validating
         for epoch in range(0, config('basemodel.num_epochs')):
             print('\nEpoch #' + str(epoch))
             # Train model + Evaluate Model
-            stats = _execute_epoch(None, tr_loader, va_loader, model, criterion, optimizer, epoch, stats, use_cuda=use_cuda)
+            stats = _execute_epoch(axes, tr_loader, va_loader, model, criterion, optimizer, epoch, stats, use_cuda=use_cuda)
             
             if epoch%4 == 0: # Save every five epcoh's
                 check = {'state_dict': model.state_dict(),'optimizer' :optimizer.state_dict()}
@@ -81,15 +82,17 @@ def main(use_cuda=False, batch_size=16):
             val_loss = stats[len(stats)-1][3] #Loss
             print("\nTraining MSE\tTraining Loss\tValidation MSE\tValidation Loss\n")
             print(train_acc, train_loss, val_acc, val_loss, sep='\t')
+            plt.close()
+            plt.show()
 
             
 
-        print('\nFinished Training')
+        print('\nFinished Training. Saving plot....')
+        save_training_plot(fig, 'basemodel')
         print('\nBegin Model Test Set Evaluation...')
 
         # Test model
-        te_labels, te_preds, te_loss = _predict(te_loader, model, use_cuda=use_cuda)
-        te_metrics = eval_metrics(te_labels, te_preds) 
+        te_metrics, te_loss = _predict(te_loader, model, criterion, use_cuda=use_cuda)
         
         if te_metrics[0] > best_mse:
             best_mse = te_metrics[0]
@@ -99,8 +102,8 @@ def main(use_cuda=False, batch_size=16):
         print("\nTesting MSE\tTesting Loss\n")
         print(te_metrics[0], te_loss, sep='\t')
         print('Finished Model Testing, Saving Model')
-        torch.save(model, "model_save.pt")
-        #save_training_plot(fig, 'basemodel')
+        check = {'state_dict': model.state_dict(),'optimizer' :optimizer.state_dict()}
+        torch.save(check, save_dir+model_name+ "_save_" + str(final) + ".pt")
 
     print("Best learning rate: {}, best weight_decay: {}".format(best_lr, best_wd))
     print("Best MSE: {:.4f}".format(best_mse))

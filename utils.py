@@ -61,6 +61,7 @@ def update_training_plot(axes, epoch, stats):
     axes[1].plot(range(epoch - len(stats) + 1, epoch + 1), train_loss,
         linestyle='--', marker='o', color='r')
     axes[1].legend(['Validation', 'Train'])
+    plt.show()
     # plt.pause(0.00001)
 
 def save_training_plot(fig, modType):

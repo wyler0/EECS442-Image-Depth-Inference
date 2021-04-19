@@ -96,7 +96,7 @@ def _train_epoch(data_loader, model, criterion, optimizer, use_cuda=False):
     # Return normalized statistics
     return (torch.sum(tr_metrics, axis=0)/len(data_loader), torch.sum(running_loss)/len(data_loader))
 
-def _execute_epoch(axis, tr_loader, val_loader, model, criterion, optimizer, epoch, stats, use_cuda=False):
+def _execute_epoch(axes, tr_loader, val_loader, model, criterion, optimizer, epoch, stats, use_cuda=False):
     """
     Evaluates the `model` on the train and validation set.
     """
@@ -109,5 +109,5 @@ def _execute_epoch(axis, tr_loader, val_loader, model, criterion, optimizer, epo
 
     # Store data & plot
     stats.append([tr_metrics, train_loss, va_metrics, val_loss])
-    #update_training_plot(axes, epoch, stats)
+    update_training_plot(axes, epoch, stats)
     return stats
