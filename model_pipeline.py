@@ -66,13 +66,16 @@ def main(use_cuda=False, batch_size=16):
             print('\nEpoch #' + str(epoch))
             # Train model + Evaluate Model
             stats = _execute_epoch(None, tr_loader, va_loader, model, criterion, optimizer, epoch, stats, use_cuda=use_cuda)
-            
+            if epoch%4 == 0: # Save every five epcoh's
+                torch.save(model, "model_save_" + str(i) + ".pt")
             train_acc = stats[len(stats)-1][0][0] #MSE
             train_loss = stats[len(stats)-1][1] #Loss
             val_acc = stats[len(stats)-1][2][0] #MSE
             val_loss = stats[len(stats)-1][3] #Loss
             print("\nTraining MSE\tTraining Loss\tValidation MSE\tValidation Loss\n")
             print(train_acc, train_loss, val_acc, val_loss, sep='\t')
+
+            
 
         print('\nFinished Training')
         print('\nBegin Model Test Set Evaluation...')

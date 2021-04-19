@@ -40,7 +40,7 @@ def _predict(eval_loader, model, criterion, use_cuda=False):
             y_true.append(y.unsqueeze(2)) # Add axis of dim 1 to end of gt for metrics
 
     # Return data
-    return (y_true, y_pred, running_loss)
+    return (y_true, y_pred, np.sum(running_loss)/len(running_loss))
 
 def _train_epoch(data_loader, model, criterion, optimizer, use_cuda=False):
     """
@@ -83,7 +83,7 @@ def _train_epoch(data_loader, model, criterion, optimizer, use_cuda=False):
         torch.cuda.empty_cache()
 
     # Return data
-    return (y_true, y_pred, running_loss)    
+    return (y_true, y_pred, np.sum(running_loss)/len(running_loss))    
 
 def _execute_epoch(axis, tr_loader, val_loader, model, criterion, optimizer, epoch, stats, use_cuda=False):
     """
@@ -95,14 +95,14 @@ def _execute_epoch(axis, tr_loader, val_loader, model, criterion, optimizer, epo
     
     # Evaluate metrics & loss
     tr_metrics = eval_metrics(y_true_train, y_pred_train) 
-    train_loss = np.mean(running_loss_train) #TODO, use metrics!
+    train_loss = running_loss_train #TODO, use metrics!
     
     # Setup and execute evaluation
     y_true_eval, y_pred_eval, running_loss_eval = _predict(val_loader, model, criterion, use_cuda=use_cuda)
 
     # Evaluate metrics & loss
     va_metrics = eval_metrics(y_true_eval, y_pred_eval) 
-    val_loss = np.mean(running_loss_eval) #TODO, use metrics!
+    val_loss = running_loss_eval #TODO, use metrics!
     
     # Store data & plot
     stats.append([tr_metrics, train_loss, va_metrics, val_loss])
