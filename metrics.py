@@ -42,11 +42,12 @@ def MAE(gt_depth_map, pred_depth_map):
 
 def thresh_acc(gt_depth_map, pred_depth_map, threshold=1.25):
     bs, h, w, _ = gt_depth_map.size()
-    index = np.where(torch.max(gt_depth_map/pred_depth_map, pred_depth_map/gt_depth_map) < threshold)
+    index = torch.where(torch.max(gt_depth_map/pred_depth_map, pred_depth_map/gt_depth_map) < threshold)
     percent = len(index[0])/(bs*h*w)
     return percent
 
 def plot_metrics(train_metrics, val_metrics, test_metrics):
+    return
     # plot metrics across dataset splits
     plt.subplot(2, 3, 1)
     data = {'train_MSE': train_metrics[0], 'val_MSE': val_metrics[0], 'test_MSE': test_metrics[0]}

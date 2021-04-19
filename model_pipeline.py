@@ -18,22 +18,28 @@ from diode import DIODE
 from models.model import ImageDepthPredModel
 from train_model import _execute_epoch, _predict
 from metrics import eval_metrics
-from utils import get_hyper_parameters, make_training_plot, save_training_plot, config, hold_training_plot
+from utils import get_hyper_parameters, config #, make_training_plot, save_training_plot, hold_training_plot
 
-def main():
-    # Setup & Split Dataset
+def main(use_cuda=False, batch_size=16):
+    if(use_cuda):
+        print("Using GPU.")
+    print("Batch size: " + str(batch_size))
+    # Setup & Split Datase
     dataset = DIODE('diode/diode_meta.json', 'diode', ['val'], ['indoors','outdoor'])
     indices = np.arange(0,len(dataset))
     np.random.shuffle(indices) # shuffle the indicies
 
     tr_split_ind = math.floor(0.7*len(dataset)) # 70% Train
     va_split_ind = math.floor(0.85*len(dataset)) # 15% Validation and 15% Test
-    tr_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]))
-    va_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[tr_split_ind:va_split_ind]))
-    te_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[va_split_ind:]))
+    tr_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]))
+    va_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[tr_split_ind:va_split_ind]))
+    te_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[va_split_ind:]))
 
     # Load model
     model = ImageDepthPredModel()
+    if(use_cuda):
+        print("Model sent to GPU")
+        model.cuda()
 
     # Grab hyperparameters for model specified
     learning_rate, weight_decay = get_hyper_parameters('basemodel')
@@ -44,7 +50,7 @@ def main():
     best_mse = 0
 
     # Grid search on weight decay and learning rate options
-    for lr, wd in tqdm(itertools.product(learning_rate, weight_decay)):
+    for lr, wd in itertools.product(learning_rate, weight_decay):
         print('\nTraining and Evaluating Basemodel with: \tLR = ' +str(lr) + '\tWD = '+str(wd))
 
         # Define loss function, and optimizer
@@ -53,13 +59,13 @@ def main():
         
         # Setup plots and metrics results storage
         stats = []
-        fig, axes = make_training_plot('basemodel')
+        #fig, axes = make_training_plot('basemodel')
 
         # Executee configured number of epochs training + validating
-        for epoch in tqdm(range(0, config('basemodel.num_epochs'))):
+        for epoch in range(0, config('basemodel.num_epochs')):
             print('\nEpoch #' + str(epoch))
             # Train model + Evaluate Model
-            stats = _execute_epoch(axes, tr_loader, va_loader, model, criterion, optimizer, epoch, stats)
+            stats = _execute_epoch(None, tr_loader, va_loader, model, criterion, optimizer, epoch, stats, use_cuda=use_cuda)
             
             train_acc = stats[len(stats)-1][0][0] #MSE
             train_loss = stats[len(stats)-1][1] #Loss
@@ -72,7 +78,7 @@ def main():
         print('\nBegin Model Test Set Evaluation...')
 
         # Test model
-        te_labels, te_preds, te_loss = _predict(te_loader, model)
+        te_labels, te_preds, te_loss = _predict(te_loader, model, use_cuda=use_cuda)
         te_metrics = eval_metrics(te_labels, te_preds) 
         
         if te_metrics[0] > best_mse:
@@ -84,7 +90,7 @@ def main():
         print(te_metrics[0], te_loss, sep='\t')
         print('Finished Model Testing, Saving Model')
         torch.save(model, "model_save.pt")
-        save_training_plot(fig, 'basemodel')
+        #save_training_plot(fig, 'basemodel')
 
     print("Best learning rate: {}, best weight_decay: {}".format(best_lr, best_wd))
     print("Best MSE: {:.4f}".format(best_mse))
