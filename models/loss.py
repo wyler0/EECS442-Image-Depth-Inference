@@ -13,7 +13,7 @@ class ThreePartLoss(nn.Module):
         super().__init__()
         self.use_cuda = use_cuda
 
-    # given a single channel image, returns G_x, G_y
+    # given a batch of single channel images of shape (N, C, H, W), returns G_x, G_y
     def gradient(self, img):
         # use sobel filter
         kernel_x = torch.FloatTensor([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
@@ -29,14 +29,18 @@ class ThreePartLoss(nn.Module):
         return F.conv2d(img, kernel_x), F.conv2d(img, kernel_y)
 
     def forward(self, y_pred, y_ground, depthScale=0.1):
+        # reshape inputs to be (N, C, H, W)
         y_ground = y_ground.view((y_ground.size()[0], 1, y_ground.size()[1], y_ground.size()[2]))
 
+        # L1 loss of pixel-wise diff
         l_depth = torch.sum(torch.abs(y_pred - y_ground)) / torch.numel(y_pred)
+        # differentiable ssim loss from external package
         l_ssim = (1 - ssim(y_pred, y_ground)) / 2
 
         xgrad_y_pred, ygrad_y_pred = self.gradient(y_pred)
         xgrad_y_ground, ygrad_y_ground = self.gradient(y_ground)
 
+        # L1 loss of pixel-wise diff betweem x and y image gradients
         l_grad = torch.sum(torch.abs(xgrad_y_pred - xgrad_y_ground) / torch.numel(xgrad_y_pred) + 
             torch.abs(ygrad_y_pred - ygrad_y_ground) / torch.numel(ygrad_y_pred))
 
