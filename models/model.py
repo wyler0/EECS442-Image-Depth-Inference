@@ -7,6 +7,7 @@ import torchvision.transforms as T
 import random
 import numpy as np
 import torch.nn as nn
+import re
 
 class ImageDepthPredModel(nn.Module):
     def __init__(self):
@@ -14,7 +15,16 @@ class ImageDepthPredModel(nn.Module):
 
         ## Encoders ##
         # import pretrained models
-        densenet169 = models.densenet169(pretrained=True)
+        densenet169 = models.densenet169(pretrained=False)
+        pattern = re.compile(r'^(.*denselayer\d+\.(?:norm|relu|conv))\.((?:[12])\.(?:weight|bias|running_mean|running_var))$')
+        state_dict = torch.load('densenet169-b2777c0a.pth')
+        for key in list(state_dict.keys()):
+          res = pattern.match(key)
+          if res:
+              new_key = res.group(1) + res.group(2)
+              state_dict[new_key] = state_dict[key]
+              del state_dict[key]
+        densenet169.load_state_dict(state_dict)
 
         # remove the classification and batch normalization part of the model
         self.encoder_densenet = torch.nn.Sequential(*list(densenet169.features)[:-1])

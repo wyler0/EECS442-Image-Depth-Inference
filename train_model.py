@@ -27,6 +27,8 @@ def _predict(eval_loader, model, criterion):
     y_true, y_pred = [], []
     running_loss = []
     for X, y in tqdm(eval_loader):
+        X.to(device=cuda)
+        y.to(device=cuda)
         with torch.no_grad():
             output = model(X)
             y_pred.append(output)
@@ -49,7 +51,8 @@ def _train_epoch(data_loader, model, criterion, optimizer):
     running_loss = []
     for i, (X, y) in tqdm(enumerate(data_loader)):
         # convert inputs to correct type
-        X = X.float()
+        X = X.float().to(device=cuda)
+        y.to(device=cuda)
         # clear parameter gradients
         optimizer.zero_grad()
 

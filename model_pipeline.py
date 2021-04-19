@@ -28,7 +28,7 @@ def main():
 
     tr_split_ind = math.floor(0.7*len(dataset)) # 70% Train
     va_split_ind = math.floor(0.85*len(dataset)) # 15% Validation and 15% Test
-    tr_loader = DataLoader(dataset, batch_size=1, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]))
+    tr_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]))
     va_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[tr_split_ind:va_split_ind]))
     te_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[va_split_ind:]))
 
@@ -82,8 +82,8 @@ def main():
 
         print("\nTesting MSE\tTesting Loss\n")
         print(te_metrics[0], te_loss, sep='\t')
-        print('Finished Model Testing')
-
+        print('Finished Model Testing, Saving Model')
+        torch.save(model, "model_save.pt")
         save_training_plot(fig, 'basemodel')
 
     print("Best learning rate: {}, best weight_decay: {}".format(best_lr, best_wd))
