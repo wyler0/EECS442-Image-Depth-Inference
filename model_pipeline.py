@@ -7,25 +7,28 @@ Train, validate, and predict model
 '''
 import math
 import itertools
-from torch.nn import CrossEntropyLoss
+
+import numpy as np
+from torch.nn import L1Loss
 from torch.optim import Adam
 from torch.utils.data import DataLoader, SubsetRandomSampler
-import numpy as np
+from tqdm import tqdm
 
 from diode import DIODE
 from models.model import ImageDepthPredModel
 from train_model import _execute_epoch, _predict
+from metrics import eval_metrics
 from utils import get_hyper_parameters, make_training_plot, save_training_plot, config, hold_training_plot
 
 def main():
     # Setup & Split Dataset
-    dataset = DIODE('diode/diode_meta.json', 'diode/val', ['val'], ['indoors','outdoor'])
+    dataset = DIODE('diode/diode_meta.json', 'diode', ['val'], ['indoors','outdoor'])
     indices = np.arange(0,len(dataset))
     np.random.shuffle(indices) # shuffle the indicies
 
     tr_split_ind = math.floor(0.7*len(dataset)) # 70% Train
     va_split_ind = math.floor(0.85*len(dataset)) # 15% Validation and 15% Test
-    tr_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]))
+    tr_loader = DataLoader(dataset, batch_size=1, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]))
     va_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[tr_split_ind:va_split_ind]))
     te_loader = DataLoader(dataset, batch_size=64, shuffle=False, sampler=SubsetRandomSampler(indices[va_split_ind:]))
 
@@ -38,14 +41,14 @@ def main():
     # Get the best model return
     best_wd = 0
     best_lr = 0
-    best_wf1 = 0
+    best_mse = 0
 
     # Grid search on weight decay and learning rate options
-    for lr, wd in itertools.product(learning_rate, weight_decay):
-        print('Training and evaluating Basemodel with: \tLR = ' +str(lr) + '\tWD = '+str(wd))
+    for lr, wd in tqdm(itertools.product(learning_rate, weight_decay)):
+        print('\nTraining and Evaluating Basemodel with: \tLR = ' +str(lr) + '\tWD = '+str(wd))
 
         # Define loss function, and optimizer
-        criterion = CrossEntropyLoss()
+        criterion = L1Loss()
         optimizer = Adam(model.parameters(), lr=lr, weight_decay=wd)
         
         # Setup plots and metrics results storage
@@ -53,53 +56,38 @@ def main():
         fig, axes = make_training_plot('basemodel')
 
         # Executee configured number of epochs training + validating
-        for epoch in range(0, config('basemodel.num_epochs')):
-            # Train model
-            (tr_loader, model, criterion, optimizer)
+        for epoch in tqdm(range(0, config('basemodel.num_epochs'))):
+            print('\nEpoch #' + str(epoch))
+            # Train model + Evaluate Model
+            stats = _execute_epoch(axes, tr_loader, va_loader, model, criterion, optimizer, epoch, stats)
+            
+            train_acc = stats[len(stats)-1][0][0] #MSE
+            train_loss = stats[len(stats)-1][1] #Loss
+            val_acc = stats[len(stats)-1][2][0] #MSE
+            val_loss = stats[len(stats)-1][3] #Loss
+            print("\nTraining MSE\tTraining Loss\tValidation MSE\tValidation Loss\n")
+            print(train_acc, train_loss, val_acc, val_loss, sep='\t')
 
-            # Evaluate model
-            stats = _execute_epoch(axes, tr_loader, va_loader, model, criterion, epoch, stats)
-
-        print('Finished Training')
-        
-        """
-        # TODO, Update these to use the new metrics
-        print("Validation Accuracy \t Validation Loss \t Training Accuracy \t Training Loss\n")
-
-        for stat in stats:
-            val_acc, val_loss, train_acc, train_loss = stat
-            print(val_acc, val_loss, train_acc, train_loss, sep='\t')
-        """
-
-        print('Begin model evaluation...')
+        print('\nFinished Training')
+        print('\nBegin Model Test Set Evaluation...')
 
         # Test model
-        labels, preds = _predict(te_loader, model)
-
-        """
-        # TODO, Update these to use the new metrics
-        acc_score = metrics.accuracy_score(correct_labels, model_pred)
-        prec_score = metrics.precision_score(correct_labels, model_pred)
-        rec_score = metrics.recall_score(correct_labels, model_pred)
-        f1_score = metrics.f1_score(correct_labels, model_pred)
-        conf_matrix = metrics.confusion_matrix(correct_labels, model_pred)
-        print("accuracy score:", acc_score)
-        print("f1 score:", f1_score)
-        print("precision score:", prec_score)
-        print("recall score:", rec_score)
-        print("confusion matrix:", conf_matrix)
-
-        if f1_score > best_wf1:
-            best_wf1 = f1_score
+        te_labels, te_preds, te_loss = _predict(te_loader, model)
+        te_metrics = eval_metrics(te_labels, te_preds) 
+        
+        if te_metrics[0] > best_mse:
+            best_mse = te_metrics[0]
             best_lr = lr
             best_wd = wd
-        """
+
+        print("\nTesting MSE\tTesting Loss\n")
+        print(te_metrics[0], te_loss, sep='\t')
         print('Finished Model Testing')
 
         save_training_plot(fig, 'basemodel')
 
     print("Best learning rate: {}, best weight_decay: {}".format(best_lr, best_wd))
-    print("Weighted F-1: {:.4f}".format(best_wf1))
+    print("Best MSE: {:.4f}".format(best_mse))
 
     hold_training_plot()
 

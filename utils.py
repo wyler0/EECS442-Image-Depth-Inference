@@ -36,9 +36,9 @@ def make_training_plot(modType):
     fig, axes = plt.subplots(1,2, figsize=(10,5))
     plt.suptitle(modType + ' Model Training')
     axes[0].set_xlabel('Epoch')
-    axes[0].set_ylabel('Accuracy')
+    axes[0].set_ylabel('Accuracy (MSE)')
     axes[1].set_xlabel('Epoch')
-    axes[1].set_ylabel('Loss')
+    axes[1].set_ylabel('Cross Entropy Loss')
 
     return fig, axes
 
@@ -46,10 +46,11 @@ def update_training_plot(axes, epoch, stats):
     """
     Updates the training plot with a new data point for loss and accuracy
     """
-    valid_acc = [s[0] for s in stats]
-    valid_loss = [s[1] for s in stats]
-    train_acc = [s[2] for s in stats]
-    train_loss = [s[3] for s in stats]
+    train_acc = [s[0][0] for s in stats] #Plot MSE
+    train_loss = [s[1] for s in stats] #Loss
+    valid_acc = [s[2][0] for s in stats] #Plot MSE
+    valid_loss = [s[3] for s in stats] #Loss
+
     axes[0].plot(range(epoch - len(stats) + 1, epoch + 1), valid_acc,
         linestyle='--', marker='o', color='b')
     axes[0].plot(range(epoch - len(stats) + 1, epoch + 1), train_acc,

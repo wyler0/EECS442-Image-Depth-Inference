@@ -7,6 +7,9 @@ Code for training and validating and plotting a single epoch
 import torch
 import numpy as np
 import random
+from tqdm import tqdm
+
+from metrics import eval_metrics
 from utils import update_training_plot
 
 torch.manual_seed(42)
@@ -23,7 +26,7 @@ def _predict(eval_loader, model, criterion):
     # Setup and execute evaluation
     y_true, y_pred = [], []
     running_loss = []
-    for X, y in eval_loader:
+    for X, y in tqdm(eval_loader):
         with torch.no_grad():
             output = model(X)
             y_pred.append(output)
@@ -44,7 +47,9 @@ def _train_epoch(data_loader, model, criterion, optimizer):
     # Seetup and execute training
     y_true, y_pred = [], []
     running_loss = []
-    for i, (X, y) in enumerate(data_loader):
+    for i, (X, y) in tqdm(enumerate(data_loader)):
+        # convert inputs to correct type
+        X = X.float()
         # clear parameter gradients
         optimizer.zero_grad()
 
@@ -62,26 +67,26 @@ def _train_epoch(data_loader, model, criterion, optimizer):
     # Return data
     return (y_true, y_pred, running_loss)    
 
-def _execute_epoch(axes, tr_loader, val_loader, model, criterion, epoch, stats):
+def _execute_epoch(axes, tr_loader, val_loader, model, criterion, optimizer, epoch, stats):
     """
     Evaluates the `model` on the train and validation set.
     """
 
     # Setup and execute training
-    y_true_train, y_pred_train, running_loss_train = _train_epoch(tr_loader, model, criterion)
+    y_true_train, y_pred_train, running_loss_train = _train_epoch(tr_loader, model, criterion, optimizer)
     
-    # Calculate train loss and accuracy for epoch
+    # Evaluate metrics & loss
+    tr_metrics = eval_metrics(y_true_train, y_pred_train) 
     train_loss = np.sum(running_loss_train) #TODO, use metrics!
-    train_acc = 0 #TODO, Use metrics!
     
     # Setup and execute evaluation
     y_true_eval, y_pred_eval, running_loss_eval = _predict(val_loader, model, criterion)
 
-    # Calculate val loss and accuracy for epoch
+    # Evaluate metrics & loss
+    va_metrics = eval_metrics(y_true_eval, y_pred_eval) 
     val_loss = np.sum(running_loss_eval) #TODO, use metrics!
-    val_acc = 0 #TODO, Use metrics!
     
     # Store data & plot
-    stats.append([val_acc, val_loss, train_acc, train_loss])
+    stats.append([tr_metrics, train_loss, va_metrics, val_loss])
     update_training_plot(axes, epoch, stats)
     return stats
