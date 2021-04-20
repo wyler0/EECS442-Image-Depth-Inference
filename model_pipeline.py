@@ -40,7 +40,7 @@ def main(use_cuda=False, batch_size=16):
     te_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[va_split_ind:]))
 
     # Load model
-    model_name = "basemodel"
+    model_name = "weightDecay"
     model = ImageDepthPredModel()
     if(use_cuda):
         print("Model sent to GPU")
