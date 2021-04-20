@@ -57,7 +57,7 @@ def main(use_cuda=False, batch_size=16):
 
     # Grid search on weight decay and learning rate options
     for lr, wd in itertools.product(learning_rate, weight_decay):
-        print('\nTraining and Evaluating Basemodel with: \tLR = ' +str(lr) + '\tWD = '+str(wd))
+        print('\nTraining and Evaluating ' + model_name + ' with: \tLR = ' +str(lr) + '\tWD = '+str(wd))
 
         # Define loss function, and optimizer
         criterion = ThreePartLoss(use_cuda=use_cuda)
