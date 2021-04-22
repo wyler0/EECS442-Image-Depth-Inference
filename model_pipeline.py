@@ -23,25 +23,31 @@ from train_model import _execute_epoch, _predict
 from metrics import eval_metrics
 from utils import get_hyper_parameters, config, make_training_plot, save_training_plot, hold_training_plot
 
-def main(use_cuda=False, batch_size=16):
+def main(use_cuda=False, batch_size=16, saved_data_additions="", start_epoch = None, load_checkpoint=None, use_local_diode=False):
     if(use_cuda):
         print("Using GPU.")
     print("Batch size: " + str(batch_size))
     print("Epochs: " + str(config('basemodel.num_epochs')))
-    # Setup & Split Datase
-    dataset = DIODE('diode/diode_meta.json', 'diode', ['val'], ['indoors','outdoor'])
+    # Setup & Split Dataset
+    if not use_local_diode:
+        dataset = DIODE('diode/diode_meta.json', 'diode', ['val', 'train'], ['indoors'], fast_diode='/content/diode')
+    else:
+        dataset = DIODE('diode/diode_meta.json', '/content/diode', ['val', 'train'], ['indoors'])
     indices = np.arange(0,len(dataset))
     np.random.shuffle(indices) # shuffle the indicies
 
-    tr_split_ind = math.floor(0.7*len(dataset)) # 70% Train
-    va_split_ind = math.floor(0.85*len(dataset)) # 15% Validation and 15% Test
+    tr_split_ind = math.floor(0.9*len(dataset)) # 90% Train
+    va_split_ind = math.floor(0.95*len(dataset)) # 5% Validation and 5% Test
     tr_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[:tr_split_ind]), pin_memory=True)
     va_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[tr_split_ind:va_split_ind]), pin_memory=True)
     te_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, sampler=SubsetRandomSampler(indices[va_split_ind:]))
 
     # Load model
-    model_name = "weightDecay"
+    model_name = "basemodel"
     model = ImageDepthPredModel()
+    if load_checkpoint:
+        checkpoint = torch.load(load_checkpoint)
+        model.load_state_dict(checkpoint['state_dict'])
     if(use_cuda):
         print("Model sent to GPU")
         model.cuda()
@@ -68,16 +74,17 @@ def main(use_cuda=False, batch_size=16):
         fig, axes = make_training_plot('basemodel')
 
         # Executee configured number of epochs training + validating
-        for epoch in range(0, config('basemodel.num_epochs')):
+        start_epoch = start_epoch if start_epoch else 0
+        for epoch in range(start_epoch, config('basemodel.num_epochs')):
             print('\nEpoch #' + str(epoch))
             # Train model + Evaluate Model
             stats = _execute_epoch(axes, tr_loader, va_loader, model, criterion, optimizer, epoch, stats, use_cuda=use_cuda)
             
-            if epoch%4 == 0: # Save every five epcoh's
+            if epoch%2 == 0: # Save every five epcoh's
                 print("Saving model state and plots.")
                 save_training_plot(fig, 'basemodel')
                 check = {'state_dict': model.state_dict(),'optimizer' :optimizer.state_dict()}
-                torch.save(check, save_dir+model_name+ "_save_" + str(epoch) + ".pt")
+                torch.save(check, save_dir+model_name+ "_save_" + str(epoch) + str(saved_data_additions) + ".pt")
            
             train_acc = stats[len(stats)-1][0][0] #MSE
             train_loss = stats[len(stats)-1][1] #Loss
@@ -91,7 +98,7 @@ def main(use_cuda=False, batch_size=16):
             
 
         print('\nFinished Training. Saving plot....')
-        save_training_plot(fig, 'basemodel')
+        save_training_plot(fig, 'basemodel_'+ str(saved_data_additions))
         print('\nBegin Model Test Set Evaluation...')
 
         # Test model
@@ -106,7 +113,7 @@ def main(use_cuda=False, batch_size=16):
         print(te_metrics[0], te_loss, sep='\t')
         print('Finished Model Testing, Saving Model')
         check = {'state_dict': model.state_dict(),'optimizer' :optimizer.state_dict()}
-        torch.save(check, save_dir+model_name+ "_save_final.pt")
+        torch.save(check, save_dir+model_name+ "_save"+ str(saved_data_additions) +"_final.pt")
 
     print("Best learning rate: {}, best weight_decay: {}".format(best_lr, best_wd))
     print("Best MSE: {:.4f}".format(best_mse))

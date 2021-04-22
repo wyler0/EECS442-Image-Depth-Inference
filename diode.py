@@ -1,4 +1,5 @@
 import os.path as osp
+import os
 from itertools import chain
 import json
 
@@ -85,8 +86,9 @@ def plot_normal_map(normal_map):
     
     
 class DIODE(Dataset):
-    def __init__(self, meta_fname, data_root, splits, scene_types):
+    def __init__(self, meta_fname, data_root, splits, scene_types, fast_diode=None):
         self.data_root = data_root
+        self.fast_root = fast_diode
         self.splits = check_and_tuplize_tokens(
             splits, _VALID_SPLITS
         )
@@ -103,7 +105,7 @@ class DIODE(Dataset):
                 _curr = map(lambda x: osp.join(split, scene_type, x), _curr)
                 imgs.extend(list(_curr))
         self.imgs = imgs
-
+        self.imgs = [i for i in imgs if os.path.exists(osp.join(self.data_root, '{}.png'.format(i)))]
         self.img_preprocess = transforms.Compose([])
         self.gt_preprocess = transforms.Compose([
             transforms.Resize((384, 512))
@@ -117,8 +119,15 @@ class DIODE(Dataset):
 
     def __getitem__(self, index):
         im = self.imgs[index]
-        im_fname = osp.join(self.data_root, '{}.png'.format(im))
-        de_fname = osp.join(self.data_root, '{}_depth.npy'.format(im))
+        if(os.path.exists(osp.join(self.fast_root, '{}.png'.format(im)))):
+            im_fname = osp.join(self.fast_root, '{}.png'.format(im))
+        else:
+            im_fname = osp.join(self.data_root, '{}.png'.format(im))
+        if(os.path.exists(osp.join(self.fast_root, '{}_depth.npy'.format(im)))):
+            de_fname = osp.join(self.fast_root, '{}_depth.npy'.format(im))
+        else:
+            de_fname = osp.join(self.data_root, '{}_depth.npy'.format(im))
+        
         de_mask_fname = osp.join(self.data_root, '{}_depth_mask.npy'.format(im))
 
         # im = np.array(Image.open(osp.join(self.data_root, im_fname)))
